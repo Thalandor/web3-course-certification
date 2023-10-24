@@ -1,5 +1,6 @@
 import express from "express";
 import { router } from "./routes";
+import cors from "cors";
 
 export default class App {
   #app: express.Application;
@@ -14,6 +15,8 @@ export default class App {
 
   start = async () => {
     // Middlewares
+
+    this.#app.use(cors());
     this.#app.use(express.json());
 
     // Set routes
