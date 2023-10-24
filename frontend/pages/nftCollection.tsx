@@ -96,6 +96,9 @@ const NFT_Collection: NextPage = () => {
       issuer: walletAddress,
       symbol: nftClassSymbol,
       description: nftClassDescription,
+      royaltyRate: "0",
+      // whitelist
+      features: [2],
     })]).then((passed) => {
       setClassCreated(passed)
     })
@@ -113,7 +116,7 @@ const NFT_Collection: NextPage = () => {
       classId: nftClassID,
       id: `kitten-${Date.now()}`,
       uri: kittenURI,
-      uriHash: sha256.create().update(kittenURI).hex()
+      uriHash: sha256.create().update(kittenURI).hex(),
     })]).then((passed) => {
       if (passed) {
         queryNFTs()
