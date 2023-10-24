@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "@material-ui/core": "4.12.4",
+    "@material-ui/icons": "4.11.3",
+    "material-ui-avatar-picker": "1.0.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "^5.0.0"
+  },
+  "main": "/index.js",
+  "devDependencies": {},
+  "name": "6yfwd2",
+  "description": null,
+  "version": "0.0.24",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
