@@ -150,31 +150,32 @@ const NFT_Collection: NextPage = () => {
   // }
 
   const generateRandomId = (): string => {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/:-';
-    
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/:-'
+
     const randomChar = (): string => {
-      return chars[Math.floor(Math.random() * chars.length)];
-    };
-  
-    const length = 3 + Math.floor(Math.random() * 98); // Generate a length between 3 and 100
-  
-    let id = randomChar(); // Start with a random character
-  
+      return chars[Math.floor(Math.random() * chars.length)]
+    }
+
+    const length = 3 + Math.floor(Math.random() * 98) // Generate a length between 3 and 100
+
+    let id = randomChar() // Start with a random character
+
     // Make sure the first character is a letter
     while (id.match(/[^a-zA-Z]/)) {
-      id = randomChar();
+      id = randomChar()
     }
-  
+
     // Generate the rest of the characters
     for (let i = 1; i < length; i++) {
-      id += randomChar();
+      id += randomChar()
     }
-  
-    return id;
-  };
+
+    return id
+  }
 
   const mintKitten = () => {
-    const nftId =  generateRandomId()   
+    const nftId = generateRandomId()
     set_id(nftId)
     console.log('id', _id)
     setError('')
@@ -195,7 +196,7 @@ const NFT_Collection: NextPage = () => {
   }
 
   const whitelist = async (whiteListedAccount: string) => {
-    console.log({_id})
+    console.log({ _id })
     const whitelistedNFT = AssetNFTTx.AddToWhitelist({
       classId: nftClassID,
       id: _id,
@@ -203,9 +204,7 @@ const NFT_Collection: NextPage = () => {
       account: whiteListedAccount,
     })
     //whitelist
-    console.log('whitelistedNFT', whitelistedNFT)
     const success = await sendTx([whitelistedNFT])
-    console.log('whitelist done: :', success)
   }
 
   const cancelTransferOwnership = () => {
