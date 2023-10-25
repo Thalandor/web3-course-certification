@@ -9,9 +9,6 @@ import { AssetNFT as AssetNFTTx, NFT as NFTTx } from '../coreum/tx'
 import { EncodeObject } from '@cosmjs/proto-signing'
 import { NFT } from 'coreum-js'
 
-// testcore1j9r3zexrthfzqfxln636j5ej4sllxvg4k58jwk
-// testcore1fsfglql5qqujft7nfys4c7a2pe9uwczkdfha7s
-
 const nftClassSymbol = `course${Date.now()}`
 
 const generateKittenURL = () => {
@@ -120,34 +117,11 @@ const NFT_Collection: NextPage = () => {
     })
     const success = await sendTx([newNFTCollection])
     setClassCreated(success)
-    // sendTx([AssetNFTTx.MsgIssueClass({
-    //   issuer: walletAddress,
-    //   symbol: nftClassSymbol,
-    //   description: nftClassDescription,
-    //   royaltyRate: "0",
-    //   // whitelist
-    //   features: [2],
-    // })]).then((passed) => {
-    //   setClassCreated(passed)
-    // })
   }
 
   const changeKitten = () => {
     setKittenURI(generateKittenURL())
   }
-
-  //whitelist
-  // function whitelist(id: string, address: string) {
-  //   const whitelistedNFT = NFT.AddToWhitelist({
-
-  //     classId: nftClassID,
-  //     id: id,
-  //     sender: walletAddress,
-  //     account: address,
-
-  //   });
-  //   return whitelistedNFT
-  // }
 
   const generateRandomId = (): string => {
     const chars =
@@ -177,7 +151,6 @@ const NFT_Collection: NextPage = () => {
   const mintKitten = () => {
     const nftId = generateRandomId()
     set_id(nftId)
-    console.log('id', _id)
     setError('')
     setLoading(true)
     sendTx([
@@ -196,7 +169,6 @@ const NFT_Collection: NextPage = () => {
   }
 
   const whitelist = async (whiteListedAccount: string) => {
-    console.log({ _id })
     const whitelistedNFT = AssetNFTTx.AddToWhitelist({
       classId: nftClassID,
       id: _id,
@@ -217,7 +189,6 @@ const NFT_Collection: NextPage = () => {
     setError('')
     setLoading(true)
     await whitelist(recipientAddress)
-    console.log('after whitelist')
 
     const success = await sendTx([
       NFTTx.MsgSend({
@@ -240,7 +211,6 @@ const NFT_Collection: NextPage = () => {
         msgs,
         'auto'
       )
-      console.log(`Tx hash: ${resp?.transactionHash}`)
       setLoading(false)
       return true
     } catch (error: any) {

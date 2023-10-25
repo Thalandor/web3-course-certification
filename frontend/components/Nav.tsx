@@ -1,10 +1,10 @@
-import {useSigningClient} from 'contexts/client'
+import { useSigningClient } from 'contexts/client'
 import Link from 'next/link'
 import Image from 'next/image'
 import Router from 'next/router'
 
 function Nav() {
-  const {walletAddress, connectWallet, disconnect} = useSigningClient()
+  const { walletAddress, connectWallet, disconnect } = useSigningClient()
   const handleConnect = () => {
     if (walletAddress.length === 0) {
       connectWallet()
@@ -18,8 +18,7 @@ function Nav() {
 
   return (
     <div className="border-b w-screen px-2 md:px-16">
-      <nav
-        className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
+      <nav className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
         <div className="flex items-center">
           <Link href="/">
             <a>
