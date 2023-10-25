@@ -60,3 +60,13 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     throw new Error(error.message);
   }
 };
+
+export const getAll = async (): Promise<User[]> => {
+  try {
+    const users: User[] = await db.any("SELECT * FROM users");
+    return users;
+  } catch (error: any) {
+    console.error("Error while fetching users:", error);
+    throw new Error(error.message);
+  }
+};

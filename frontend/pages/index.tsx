@@ -7,9 +7,9 @@ const Home: NextPage = () => {
   const { walletAddress } = useSigningClient()
 
   const testApi = async () => {
-    const apiCall = await fetch('/api/test')
+    const apiCall = await fetch('/api/users')
     const result = await apiCall.json()
-    console.log('result is: :', result)
+    console.log('users on the system: :', result)
   }
 
   return (
