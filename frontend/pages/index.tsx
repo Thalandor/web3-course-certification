@@ -1,17 +1,8 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/client'
 
 const Home: NextPage = () => {
-  const { walletAddress } = useSigningClient()
-
-  const testApi = async () => {
-    const apiCall = await fetch('/api/users')
-    const result = await apiCall.json()
-    console.log('users on the system: :', result)
-  }
-
   return (
     <WalletLoader>
       <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 max-w-full sm:w-full">
