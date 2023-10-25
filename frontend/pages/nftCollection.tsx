@@ -1,27 +1,26 @@
-import {useEffect, useState} from 'react'
-import type {NextPage} from 'next'
-import {sha256} from 'js-sha256'
+import { useEffect, useState } from 'react'
+import type { NextPage } from 'next'
+import { sha256 } from 'js-sha256'
 
 import WalletLoader from 'components/WalletLoader'
-import {useSigningClient} from 'contexts/client'
-import {QueryNFTsResponse} from "../coreum/proto-ts/coreum/nft/v1beta1/query";
-import { AssetNFT as AssetNFTTx, NFT as NFTTx} from '../coreum/tx';
-import {EncodeObject} from "@cosmjs/proto-signing";
+import { useSigningClient } from 'contexts/client'
+import { QueryNFTsResponse } from "../coreum/proto-ts/coreum/nft/v1beta1/query";
+import { AssetNFT as AssetNFTTx, NFT as NFTTx } from '../coreum/tx';
+import { EncodeObject } from "@cosmjs/proto-signing";
 import { NFT } from 'coreum-js'
-import uuid4 from "uuid4";
 
 
 // testcore1j9r3zexrthfzqfxln636j5ej4sllxvg4k58jwk
 // testcore1fsfglql5qqujft7nfys4c7a2pe9uwczkdfha7s
 
-const nftClassSymbol = `kittens${Date.now()}`
+const nftClassSymbol = `course${Date.now()}`
 
 const generateKittenURL = () => {
   return `https://placekitten.com/${200 + Math.floor(Math.random() * 100)}/${200 + Math.floor(Math.random() * 100)}`
 }
 
 const NFT_Collection: NextPage = () => {
-  const {walletAddress, signingClient, coreumQueryClient} = useSigningClient()
+  const { walletAddress, signingClient, coreumQueryClient } = useSigningClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [classCreated, setClassCreated] = useState(false)
@@ -75,7 +74,7 @@ const NFT_Collection: NextPage = () => {
 
   const queryClass = () => {
     // check that class is already created
-    coreumQueryClient?.NFTClient().Class({classId: nftClassID}).then(() => {
+    coreumQueryClient?.NFTClient().Class({ classId: nftClassID }).then(() => {
       queryNFTs()
       setClassCreated(true)
     }).catch((error) => {
@@ -108,13 +107,28 @@ const NFT_Collection: NextPage = () => {
     setKittenURI(generateKittenURL())
   }
 
+  //whitelist
+  // function whitelist(id: string, address: string) {
+  //   const whitelistedNFT = NFT.AddToWhitelist({
+
+  //     classId: nftClassID,
+  //     id: id,
+  //     sender: walletAddress,
+  //     account: address,
+
+  //   });
+  //   return whitelistedNFT
+  // }
+
+  let _id = `course111111`
+
   const mintKitten = () => {
     setError('')
     setLoading(true)
     sendTx([AssetNFTTx.MsgMint({
       sender: walletAddress,
       classId: nftClassID,
-      id: `kitten-${Date.now()}`,
+      id: _id,
       uri: kittenURI,
       uriHash: sha256.create().update(kittenURI).hex(),
     })]).then((passed) => {
@@ -122,6 +136,22 @@ const NFT_Collection: NextPage = () => {
         queryNFTs()
       }
     })
+
+    
+  }
+
+  const whitelist = () => {
+    const whitelistedNFT = NFT.AddToWhitelist({
+      classId: nftClassID,
+      id: _id,
+      sender: walletAddress,
+      account: "testcore1fsfglql5qqujft7nfys4c7a2pe9uwczkdfha7s",
+    });
+   //whitelist
+   console.log("whitelistedNFT", whitelistedNFT)
+   sendTx([whitelistedNFT]).then((passed) => {
+     console.log("whitelistedNFT", passed)
+   });
   }
 
   const cancelTransferOwnership = () => {
@@ -133,6 +163,9 @@ const NFT_Collection: NextPage = () => {
   const transferOwnership = () => {
     setError('')
     setLoading(true)
+
+    whitelist()
+
     sendTx([NFTTx.MsgSend({
       sender: walletAddress,
       classId: nftClassID,
@@ -205,48 +238,48 @@ const NFT_Collection: NextPage = () => {
             <div>
               <table className="table">
                 <thead>
-                <tr>
-                  <th className="w-24">Image</th>
-                  <th className="w-40">ID</th>
-                  <th className="w-40">Owner</th>
-                  <th className="w-96">Hash</th>
-                  <th className="w-24"></th>
-                  <th></th>
-                </tr>
+                  <tr>
+                    <th className="w-24">Image</th>
+                    <th className="w-40">ID</th>
+                    <th className="w-40">Owner</th>
+                    <th className="w-96">Hash</th>
+                    <th className="w-24"></th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody>
-                {
-                  nfts.map((l, k) => {
-                    return (
-                      <tr key={k}>
-                        <td>
-                          <div className="flex items-center space-x-3 w-24">
-                            <div className="avatar">
-                              <div className="mask mask-squircle w-12 h-12">
-                                <img src={l.uri} alt="Images"/>
+                  {
+                    nfts.map((l, k) => {
+                      return (
+                        <tr key={k}>
+                          <td>
+                            <div className="flex items-center space-x-3 w-24">
+                              <div className="avatar">
+                                <div className="mask mask-squircle w-12 h-12">
+                                  <img src={l.uri} alt="Images" />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="font-bold">{l.id}</td>
-                        <td className="truncate w-40">{l.owner}</td>
-                        <td><p className="truncate w-96">{l.uriHash}</p></td>
-                        <td className="w-24">
-                          {walletAddress == l.owner && (
-                            <button className="btn btn-primary rounded-full"
-                                    onClick={() => setTransferID(l.id)}>Transfer</button>
-                          )
-                          }
-                        </td>
-                      </tr>
-                    )
-                  })
-                }
+                          </td>
+                          <td className="font-bold">{l.id}</td>
+                          <td className="truncate w-40">{l.owner}</td>
+                          <td><p className="truncate w-96">{l.uriHash}</p></td>
+                          <td className="w-24">
+                            {walletAddress == l.owner && (
+                              <button className="btn btn-primary rounded-full"
+                                onClick={() => setTransferID(l.id)}>Transfer</button>
+                            )
+                            }
+                          </td>
+                        </tr>
+                      )
+                    })
+                  }
                 </tbody>
               </table>
             </div>
             <div className="ml-8">
-              <img className="rounded-full object-cover h-48 w-48" src={kittenURI} alt=""/>
+              <img className="rounded-full object-cover h-48 w-48" src={kittenURI} alt="" />
               <div className="py-8">
                 <button className="btn btn-primary float-left btn-accent rounded-full" onClick={changeKitten}>Change
                 </button>
