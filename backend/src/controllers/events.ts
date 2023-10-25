@@ -30,7 +30,7 @@ export const getAll = async (req: Request, res: Response) => {
 export const getAssistants = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const assistants = await eventsRepository.getAssistants(id);
+    const assistants = await eventsRepository.getAssistants(Number(id));
     res.json(assistants);
   } catch (error: any) {
     console.error("Error while fetching assistants:", error);

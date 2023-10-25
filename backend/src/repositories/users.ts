@@ -1,7 +1,7 @@
 import { db } from "../db/db";
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   surname: string;
   account: string;
@@ -12,8 +12,8 @@ export interface User {
 export const createUser = async (
   name: string,
   surname: string,
-  email: string,
   account: string,
+  email: string,
   password: string
 ): Promise<User> => {
   try {
@@ -30,7 +30,7 @@ export const createUser = async (
 };
 
 export const getUserById = async (
-  id: string,
+  id: number,
   options: { getPassword?: boolean } = { getPassword: false }
 ): Promise<User | null> => {
   try {

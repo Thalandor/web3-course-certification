@@ -31,7 +31,7 @@ export const create = async (req: Request, res: Response) => {
 export const read = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await usersRepository.getUserById(id);
+    const user = await usersRepository.getUserById(Number(id));
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
     }
@@ -59,10 +59,21 @@ export const readByEmail = async (req: Request, res: Response) => {
 export const getOwnedEvents = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const events = await eventsRepository.getOwnedEvents(id);
+    const events = await eventsRepository.getOwnedEvents(Number(id));
     res.json(events);
   } catch (error: any) {
     console.error("Error while fetching owned events:", error);
+    res.status(500).json({ errors: error.message });
+  }
+};
+
+export const joinEvent = async (req: Request, res: Response) => {
+  try {
+    const { user_id, event_id } = req.body;
+    await eventsRepository.addUserEvent(user_id, event_id);
+    res.json(200);
+  } catch (error: any) {
+    console.error("Error while inserting user event:", error);
     res.status(500).json({ errors: error.message });
   }
 };

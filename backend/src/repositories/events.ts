@@ -41,7 +41,7 @@ export const getAll = async (): Promise<any[]> => {
   }
 };
 
-export const getAssistants = async (eventId: string): Promise<any[]> => {
+export const getAssistants = async (eventId: number): Promise<any[]> => {
   try {
     const assistants: any[] = await db.any(
       "SELECT u.id, u.name, u.surname, u.email, u.account FROM users u INNER JOIN users_events ua ON ua.user_id = u.id WHERE ua.event_id = $1",
@@ -55,7 +55,7 @@ export const getAssistants = async (eventId: string): Promise<any[]> => {
   }
 };
 
-export const getOwnedEvents = async (organizerId: string): Promise<any[]> => {
+export const getOwnedEvents = async (organizerId: number): Promise<any[]> => {
   try {
     const events: any[] = await db.any(
       "SELECT e.id, e.name, e.description FROM events e INNER JOIN organizer_events oe ON oe.event_id = e.id WHERE oe.user_id = $1",
@@ -65,6 +65,18 @@ export const getOwnedEvents = async (organizerId: string): Promise<any[]> => {
     return events;
   } catch (error: any) {
     console.error("Error getting assistants:", error);
+    throw new Error(error.message);
+  }
+};
+
+export const addUserEvent = async (user_id: number, event_id: number) => {
+  try {
+    await db.none(
+      "INSERT INTO users_events(user_id, event_id) VALUES ($1, $2)",
+      [user_id, event_id]
+    );
+  } catch (error: any) {
+    console.error("Error adding user event:", error);
     throw new Error(error.message);
   }
 };

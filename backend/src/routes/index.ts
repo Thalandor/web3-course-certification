@@ -10,6 +10,7 @@ router.get("/users/:id", UserController.read);
 router.get("/users/:id/events", UserController.getOwnedEvents);
 router.post("/users", UserController.create);
 router.post("/users/email", UserController.readByEmail);
+router.post("/users/join", UserController.joinEvent);
 
 // EVENTS
 router.get("/events", EventController.getAll);
