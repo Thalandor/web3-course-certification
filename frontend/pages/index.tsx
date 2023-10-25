@@ -23,7 +23,6 @@ const Home: NextPage = () => {
             </p>
           </a>
         </Link>
-        <button onClick={() => testApi()}>Click here to test api</button>
       </div>
     </WalletLoader>
   )

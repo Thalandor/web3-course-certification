@@ -39,6 +39,7 @@ const NFT_Collection: NextPage = () => {
   const [transferID, setTransferID] = useState('')
   const [recipientAddress, setRecipientAddress] = useState('')
   const nftClassID = `${nftClassSymbol}-${walletAddress}`
+  const [_id, set_id] = useState('')
 
   useEffect(() => {
     if (!signingClient || walletAddress.length === 0) {
@@ -148,16 +149,42 @@ const NFT_Collection: NextPage = () => {
   //   return whitelistedNFT
   // }
 
-  let _id = `course111111`
+  const generateRandomId = (): string => {
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/:-'
+
+    const randomChar = (): string => {
+      return chars[Math.floor(Math.random() * chars.length)]
+    }
+
+    const length = 3 + Math.floor(Math.random() * 98) // Generate a length between 3 and 100
+
+    let id = randomChar() // Start with a random character
+
+    // Make sure the first character is a letter
+    while (id.match(/[^a-zA-Z]/)) {
+      id = randomChar()
+    }
+
+    // Generate the rest of the characters
+    for (let i = 1; i < length; i++) {
+      id += randomChar()
+    }
+
+    return id
+  }
 
   const mintKitten = () => {
+    const nftId = generateRandomId()
+    set_id(nftId)
+    console.log('id', _id)
     setError('')
     setLoading(true)
     sendTx([
       NFT.Mint({
         sender: walletAddress,
         classId: nftClassID,
-        id: _id,
+        id: nftId,
         uri: kittenURI,
         uriHash: sha256.create().update(kittenURI).hex(),
       }),
@@ -169,6 +196,7 @@ const NFT_Collection: NextPage = () => {
   }
 
   const whitelist = async (whiteListedAccount: string) => {
+    console.log({ _id })
     const whitelistedNFT = AssetNFTTx.AddToWhitelist({
       classId: nftClassID,
       id: _id,
@@ -176,9 +204,7 @@ const NFT_Collection: NextPage = () => {
       account: whiteListedAccount,
     })
     //whitelist
-    console.log('whitelistedNFT', whitelistedNFT)
     const success = await sendTx([whitelistedNFT])
-    console.log('whitelist done: :', success)
   }
 
   const cancelTransferOwnership = () => {
