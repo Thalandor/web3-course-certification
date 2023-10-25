@@ -42,6 +42,16 @@ export const read = async (req: Request, res: Response) => {
   }
 };
 
+export const getAll = async (req: Request, res: Response) => {
+  try {
+    const users = await usersRepository.getAll();
+    res.json(users);
+  } catch (error: any) {
+    console.error("Error while fetching users:", error);
+    res.status(500).json({ errors: error.message });
+  }
+};
+
 export const readByEmail = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
