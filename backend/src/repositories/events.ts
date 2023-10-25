@@ -13,12 +13,15 @@ export const create = async (
   organizer: string
 ): Promise<Event> => {
   try {
-    const newCourse: Event = await db.one(
+    const newEvent: Event = await db.one(
       "INSERT INTO events(name, description, organizer) VALUES ($1, $2, $3) RETURNING id, name, description, organizer",
       [name, description, organizer]
     );
-
-    return newCourse;
+    await db.none(
+      "INSERT INTO organizer_events(event_id, user_id) VALUES ($1, $2)",
+      [newEvent.id, organizer]
+    );
+    return newEvent;
   } catch (error: any) {
     console.error("Error during course creation:", error);
     throw new Error(error.message);
@@ -28,7 +31,7 @@ export const create = async (
 export const getAll = async (): Promise<any[]> => {
   try {
     const events: any[] = await db.any(
-      "SELECT id, name, description, u.id, u.name || ' ' || u.surname FROM events e INNER JOIN users u ON e.organizer = u.id"
+      "SELECT e.id, e.name, e.description, u.id as organizerId, u.name || ' ' || u.surname as organizerName FROM events e INNER JOIN users u ON e.organizer = u.id"
     );
 
     return events;
@@ -55,7 +58,7 @@ export const getAssistants = async (eventId: string): Promise<any[]> => {
 export const getOwnedEvents = async (organizerId: string): Promise<any[]> => {
   try {
     const events: any[] = await db.any(
-      "SELECT id, name, description FROM events e INNER JOIN organizer_events oe ON oe.event_id = e.id WHERE oe.user_id = $1",
+      "SELECT e.id, e.name, e.description FROM events e INNER JOIN organizer_events oe ON oe.event_id = e.id WHERE oe.user_id = $1",
       organizerId
     );
 
