@@ -168,7 +168,7 @@ const NFT_Collection: NextPage = () => {
     })
   }
 
-  const whitelist = (whiteListedAccount: string) => {
+  const whitelist = async (whiteListedAccount: string) => {
     const whitelistedNFT = AssetNFTTx.AddToWhitelist({
       classId: nftClassID,
       id: _id,
@@ -177,9 +177,8 @@ const NFT_Collection: NextPage = () => {
     })
     //whitelist
     console.log('whitelistedNFT', whitelistedNFT)
-    sendTx([whitelistedNFT]).then((passed) => {
-      console.log('whitelistedNFT', passed)
-    })
+    const success = await sendTx([whitelistedNFT])
+    console.log('whitelist done: :', success)
   }
 
   const cancelTransferOwnership = () => {
@@ -188,25 +187,24 @@ const NFT_Collection: NextPage = () => {
     setRecipientAddress('')
   }
 
-  const transferOwnership = () => {
+  const transferOwnership = async () => {
     setError('')
     setLoading(true)
-    console.log('recipientid: :', recipientAddress)
-    whitelist(recipientAddress)
+    await whitelist(recipientAddress)
+    console.log('after whitelist')
 
-    // sendTx([
-    //   NFTTx.MsgSend({
-    //     sender: walletAddress,
-    //     classId: nftClassID,
-    //     id: transferID,
-    //     receiver: recipientAddress,
-    //   }),
-    // ]).then((passed) => {
-    //   if (passed) {
-    //     cancelTransferOwnership()
-    //     queryNFTs()
-    //   }
-    // })
+    const success = await sendTx([
+      NFTTx.MsgSend({
+        sender: walletAddress,
+        classId: nftClassID,
+        id: transferID,
+        receiver: recipientAddress,
+      }),
+    ])
+    if (success) {
+      cancelTransferOwnership()
+      queryNFTs()
+    }
   }
 
   const sendTx = async (msgs: readonly EncodeObject[]) => {
